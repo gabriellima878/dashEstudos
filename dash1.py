@@ -28,10 +28,10 @@ app.layout = html.Div(children=[
 
     html.H3(children="Vendas de cada Produto por Loja", id="subtitulo"),
 
-    dcc.RadioItems(lista_marcas, value="Todas", id="selecao_marcas", inline=True),
+    dcc.RadioItems(options=lista_marcas, value="Todas", id="selecao_marcas", inline=True),
 
     html.Div(children=[
-        dcc.Dropdown(lista_paises, value="Todos", id="selecao_pais"),   
+        dcc.Dropdown(options=lista_paises, value="Todos", id="selecao_pais"),   
     ], style={"width": "50%", "margin": "auto"}),
 
     dcc.Graph(
@@ -46,6 +46,22 @@ app.layout = html.Div(children=[
 
 
 ], style={"text-align": "center"})
+
+
+@app.callback(
+    Output("selecao_pais", "options"),
+    Input("selecao_marcas", "value"),
+)
+def opcoes_pais(marca):
+    # criar logica que diga qual a lista de países que ele vai pegar
+    if marca == "Todas":
+        nova_lista_paises = list(df["País"].unique())
+        nova_lista_paises.append("Todos")
+    else:
+        df_filtrada = df.loc[df["Marca"]==marca, : ]
+        nova_lista_paises = list(df_filtrada["País"].unique())
+        nova_lista_paises.append("Todos")
+    return nova_lista_paises
 
 # callbacks
 
